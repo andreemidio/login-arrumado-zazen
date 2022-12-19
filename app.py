@@ -1,5 +1,8 @@
-from flask import Flask, request, render_template
+from flask import Flask, request, render_template, send_file
+import os
+from werkzeug.utils import secure_filename
 
+UPLOAD_FOLDER = os.path.join(os.getcwd(), 'upload')
 app = Flask(__name__)
 
 # Definindo a lista de usuarios e senhas validos
@@ -28,9 +31,25 @@ def login_submit():
     # Verificando se o usuario e senha digitados sao validos
     for user in users:
         if input_username == user["username"] and input_password == user["password"]:
-            return "Voce foi autorizado"
+            # return "Voce foi autorizado"
 
-    return render_template("error.html")
+            return render_template("upload.html")
+
+        if input_username != user["username"] and input_password != user["password"]:
+          return render_template("error.html")
+
+@app.route('/upload', methods=['POST'])
+def upload():
+    file = request.files['imagem']
+    save_path = os.path.join(UPLOAD_FOLDER, secure_filename(file.filename))
+    file.save(save_path)
+    return 'Upload feito com sucesso'
+
+
+@app.route('/get-file/<filename>')
+def get_file(filename):
+    file = os.path.join(UPLOAD_FOLDER, filename + '.png')
+    return send_file(file, mimetype="image/png")
 
 
 if __name__ == "__main__":
