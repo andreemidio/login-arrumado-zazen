@@ -4,8 +4,6 @@ from werkzeug.utils import secure_filename
 import datetime
 
 
-secret_key = "a4ab11c300d459c3e6d03d1320bb58ab"
-
 
 UPLOAD_FOLDER = os.path.join(os.getcwd(), 'upload')
 app = Flask(__name__)
