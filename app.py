@@ -1,6 +1,11 @@
 from flask import Flask, request, render_template, send_file
 import os
 from werkzeug.utils import secure_filename
+import datetime
+
+
+secret_key = "a4ab11c300d459c3e6d03d1320bb58ab"
+
 
 UPLOAD_FOLDER = os.path.join(os.getcwd(), 'upload')
 app = Flask(__name__)
@@ -36,14 +41,23 @@ def login_submit():
             return render_template("upload.html")
 
         if input_username != user["username"] and input_password != user["password"]:
-          return render_template("error.html")
+            return render_template("error.html")
+
 
 @app.route('/upload', methods=['POST'])
 def upload():
     file = request.files['imagem']
     save_path = os.path.join(UPLOAD_FOLDER, secure_filename(file.filename))
     file.save(save_path)
-    return 'Upload feito com sucesso'
+    Nome = request.form.get("Nome")
+    if Nome is None:
+        print("O nome não foi enviado")
+
+    Email = request.form.get("emaill")
+    time = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+    with open('submissions.txt', 'a+') as f:
+        f.write('{} - {} - {} - {}\n'.format(Nome, Email, file.filename, time))
+    return render_template("upload.html")
 
 
 @app.route('/get-file/<filename>')
