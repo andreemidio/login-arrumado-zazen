@@ -44,7 +44,7 @@ def login_submit():
             return render_template("error.html")
 
 
-@app.route('/upload', methods=['POST'])
+@app.route('http://192.168.1.100:5000/upload', methods=['POST'])
 def upload():
     file = request.files['imagem']
     save_path = os.path.join(UPLOAD_FOLDER, secure_filename(file.filename))
